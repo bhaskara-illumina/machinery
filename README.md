@@ -33,7 +33,7 @@ Machinery is an asynchronous task queue/job queue based on distributed message p
   * [Delayed Tasks](#delayed-tasks)
   * [Retry Tasks](#retry-tasks)
   * [Get Pending Tasks](#get-pending-tasks)
-  * [Cancel Tasks] (#cancel-tasks)#### Get Pending Tasks
+  * [Cancel Tasks] (#cancel-tasks)
 
 Tasks currently waiting in the queue to be consumed by workers can be inspected, e.g.:
 
