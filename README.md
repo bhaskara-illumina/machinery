@@ -33,6 +33,7 @@ Machinery is an asynchronous task queue/job queue based on distributed message p
   * [Delayed Tasks](#delayed-tasks)
   * [Retry Tasks](#retry-tasks)
   * [Get Pending Tasks](#get-pending-tasks)
+  * [Cancel Tasks] (#cancel-tasks)
   * [Keeping Results](#keeping-results)
 * [Workflows](#workflows)
   * [Groups](#groups)
@@ -586,6 +587,7 @@ const (
 	StateSuccess = "SUCCESS"
 	// StateFailure - when processing of the task fails
 	StateFailure = "FAILURE"
+	// StateCancelled - when task has been cancelled by the user
 )
 ```
 
