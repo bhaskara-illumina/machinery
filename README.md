@@ -33,6 +33,7 @@ Machinery is an asynchronous task queue/job queue based on distributed message p
   * [Delayed Tasks](#delayed-tasks)
   * [Retry Tasks](#retry-tasks)
   * [Get Pending Tasks](#get-pending-tasks)
+  * [Cancel Tasks](#cancel-tasks)
   * [Keeping Results](#keeping-results)
 * [Workflows](#workflows)
   * [Groups](#groups)
@@ -566,7 +567,18 @@ Tasks currently waiting in the queue to be consumed by workers can be inspected,
 server.GetBroker().GetPendingTasks("some_queue")
 ```
 
+#### Cancel Tasks
+
+Tasks currently in the queue waiting processing may be <b><i>opportunistically</i></b> cancelled. Worker looks for cancelled tasks after popping the task from the queue, but before executing the task. (<b><i>Beware of race condition and key expiration times</i></b>). Worker invokes error callback when attempting to execute a cancelled task. 
+
+```go
+server.getBackend().SetStateCancelled(&tasks.Signature{
+	UUID: <uuid of the task to be cancelled>
+})
+```
+
 > Currently only supported by Redis broker.
+
 
 #### Keeping Results
 
@@ -586,6 +598,7 @@ const (
 	StateSuccess = "SUCCESS"
 	// StateFailure - when processing of the task fails
 	StateFailure = "FAILURE"
+	// StateCancelled - when task has been cancelled by the user
 )
 ```
 
