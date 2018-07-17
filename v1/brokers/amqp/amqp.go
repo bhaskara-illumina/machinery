@@ -133,6 +133,11 @@ func (b *Broker) Publish(signature *tasks.Signature) error {
 	}
 	defer b.Close(channel, conn)
 
+	var priority uint8
+	if signature.CutInLine {
+		priority = 255
+	}
+
 	if err := channel.Publish(
 		b.GetConfig().AMQP.Exchange, // exchange name
 		signature.RoutingKey,        // routing key
@@ -143,6 +148,7 @@ func (b *Broker) Publish(signature *tasks.Signature) error {
 			ContentType:  "application/json",
 			Body:         msg,
 			DeliveryMode: amqp.Persistent,
+			Priority:     priority,
 		},
 	); err != nil {
 		return err

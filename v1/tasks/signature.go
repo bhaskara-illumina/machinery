@@ -54,6 +54,7 @@ type Signature struct {
 	Immutable      bool
 	RetryCount     int
 	RetryTimeout   int
+	CutInLine      bool
 	OnSuccess      []*Signature
 	OnError        []*Signature
 	ChordCallback  *Signature

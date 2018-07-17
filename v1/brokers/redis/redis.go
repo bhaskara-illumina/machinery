@@ -211,8 +211,11 @@ func (b *Broker) Publish(signature *tasks.Signature) error {
 			return err
 		}
 	}
-
-	_, err = conn.Do("RPUSH", signature.RoutingKey, msg)
+	if signature.CutInLine {
+		_, err = conn.Do("LPUSH", signature.RoutingKey, msg)
+	} else {
+		_, err = conn.Do("RPUSH", signature.RoutingKey, msg)
+	}
 	return err
 }
 
