@@ -14,6 +14,7 @@ type Backend interface {
 
 	// Setting / getting task state
 	SetStatePending(signature *tasks.Signature) error
+	SetStateCancelled(signature *tasks.Signature) error
 	SetStateReceived(signature *tasks.Signature) error
 	SetStateStarted(signature *tasks.Signature) error
 	SetStateRetry(signature *tasks.Signature) error

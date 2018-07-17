@@ -142,6 +142,13 @@ func (b *Backend) SetStatePending(signature *tasks.Signature) error {
 	return b.updateState(taskState)
 }
 
+// SetStateCancelled updates task state to CANCELLED
+func (b *Backend) SetStateCancelled(signature *tasks.Signature) error {
+	// dont have to pop the value from queue, just check for canceled state before execution
+	taskState := tasks.NewCancelledTaskState(signature)
+	return b.updateState(taskState)
+}
+
 // SetStateReceived updates task state to RECEIVED
 func (b *Backend) SetStateReceived(signature *tasks.Signature) error {
 	taskState := tasks.NewReceivedTaskState(signature)

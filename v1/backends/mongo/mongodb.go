@@ -147,6 +147,12 @@ func (b *Backend) SetStatePending(signature *tasks.Signature) error {
 	return b.updateState(signature, update)
 }
 
+// SetStateCancelled updates task state to CANCELLED
+func (b *Backend) SetStateCancelled(signature *tasks.Signature) error {
+	update := bson.M{"state": tasks.StateCancelled}
+	return b.updateState(signature, update)
+}
+
 // SetStateReceived updates task state to RECEIVED
 func (b *Backend) SetStateReceived(signature *tasks.Signature) error {
 	update := bson.M{"state": tasks.StateReceived}

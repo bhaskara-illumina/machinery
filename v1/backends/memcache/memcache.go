@@ -126,6 +126,12 @@ func (b *Backend) TriggerChord(groupUUID string) (bool, error) {
 	return true, nil
 }
 
+// SetStateCancelled updates task state to CANCELLED
+func (b *Backend) SetStateCancelled(signature *tasks.Signature) error {
+	taskState := tasks.NewCancelledTaskState(signature)
+	return b.updateState(taskState)
+}
+
 // SetStatePending updates task state to PENDING
 func (b *Backend) SetStatePending(signature *tasks.Signature) error {
 	taskState := tasks.NewPendingTaskState(signature)

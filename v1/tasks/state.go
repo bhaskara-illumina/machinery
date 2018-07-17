@@ -15,6 +15,8 @@ const (
 	StateSuccess = "SUCCESS"
 	// StateFailure - when processing of the task fails
 	StateFailure = "FAILURE"
+	// StateFailure - when processing of the task fails
+	StateCancelled = "CANCELLED"
 )
 
 // TaskState represents a state of a task
@@ -36,6 +38,17 @@ type GroupMeta struct {
 	ChordTriggered bool      `bson:"chord_triggered"`
 	Lock           bool      `bson:"lock"`
 	CreatedAt      time.Time `bson:"created_at"`
+	UpdatedAt      time.Time `bson:"updated_at"`
+}
+
+// NewPendingTaskState ...
+func NewCancelledTaskState(signature *Signature) *TaskState {
+	return &TaskState{
+		TaskUUID:  signature.UUID,
+		TaskName:  signature.Name,
+		State:     StateCancelled,
+		CreatedAt: time.Now().UTC(),
+	}
 }
 
 // NewPendingTaskState ...
@@ -104,4 +117,9 @@ func (taskState *TaskState) IsSuccess() bool {
 // IsFailure returns true if state is FAILURE
 func (taskState *TaskState) IsFailure() bool {
 	return taskState.State == StateFailure
+}
+
+// IsCancelled returns true if state is Cancelled
+func (taskState *TaskState) IsCancelled() bool {
+	return taskState.State == StateCancelled
 }

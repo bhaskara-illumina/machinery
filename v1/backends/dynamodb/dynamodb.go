@@ -132,6 +132,11 @@ func (b *Backend) SetStatePending(signature *tasks.Signature) error {
 	return b.initTaskState(taskState)
 }
 
+func (b *Backend) SetStateCancelled(signature *tasks.Signature) error {
+	taskState := tasks.NewCancelledTaskState(signature)
+	return b.setTaskState(taskState)
+}
+
 func (b *Backend) SetStateReceived(signature *tasks.Signature) error {
 	taskState := tasks.NewReceivedTaskState(signature)
 	return b.setTaskState(taskState)

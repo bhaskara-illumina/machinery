@@ -117,6 +117,16 @@ func (worker *Worker) Process(signature *tasks.Signature) error {
 		return nil
 	}
 
+	// Check if the task is cancelled
+	state, err := worker.server.GetBackend().GetState(signature.UUID)
+	if err == nil {
+		if state.IsCancelled() {
+			return worker.taskCancelled(signature, errors.New("Task Cancelled"))
+		}
+	} else {
+		return fmt.Errorf("Error trying to check if task state is cancelled to not: %s", err)
+	}
+
 	// Update task state to RECEIVED
 	if err = worker.server.GetBackend().SetStateReceived(signature); err != nil {
 		return fmt.Errorf("Set state received error: %s", err)
@@ -311,6 +321,29 @@ func (worker *Worker) taskSucceeded(signature *tasks.Signature, taskResults []*t
 	_, err = worker.server.SendTask(signature.ChordCallback)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// taskCancelled updates the task state and triggers error callbacks
+func (worker *Worker) taskCancelled(signature *tasks.Signature, taskErr error) error {
+	// Task state is already set to cancelled
+	if worker.errorHandler != nil {
+		worker.errorHandler(taskErr)
+	} else {
+		log.ERROR.Printf("Failed processing %s. Error = %v", signature.UUID, taskErr)
+	}
+
+	// Trigger error callbacks
+	for _, errorTask := range signature.OnError {
+		// Pass error as a first argument to error callbacks
+		args := append([]tasks.Arg{{
+			Type:  "string",
+			Value: taskErr.Error(),
+		}}, errorTask.Args...)
+		errorTask.Args = args
+		worker.server.SendTask(errorTask)
 	}
 
 	return nil
