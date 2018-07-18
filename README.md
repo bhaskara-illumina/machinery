@@ -599,6 +599,8 @@ const (
 	// StateFailure - when processing of the task fails
 	StateFailure = "FAILURE"
 	// StateCancelled - when task has been cancelled by the user
+	StateCancelled = "CANCELLED"
+
 )
 ```
 
