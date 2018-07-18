@@ -124,7 +124,12 @@ func (taskState *TaskState) IsFailure() bool {
 	return taskState.State == StateFailure
 }
 
-// IsCancelled returns true if state is Cancelled
+// IsCancelled returns true if state is CANCELLED
 func (taskState *TaskState) IsCancelled() bool {
 	return taskState.State == StateCancelled
+}
+
+// IsPending returns true if state is PENDING
+func (taskState *TaskState) IsPending() bool {
+	return taskState.State == StatePending
 }
