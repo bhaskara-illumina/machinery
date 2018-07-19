@@ -1,6 +1,9 @@
 package tasks
 
-import "time"
+import (
+	"os"
+	"time"
+)
 
 const (
 	// StatePending - initial state of a task
@@ -15,7 +18,7 @@ const (
 	StateSuccess = "SUCCESS"
 	// StateFailure - when processing of the task fails
 	StateFailure = "FAILURE"
-	// StateFailure - when processing of the task fails
+	// StateCancelled - when processing of the task fails
 	StateCancelled = "CANCELLED"
 )
 
@@ -27,6 +30,7 @@ type TaskState struct {
 	Results   []*TaskResult `bson:"results"`
 	Error     string        `bson:"error"`
 	CreatedAt time.Time     `bson:"created_at"`
+	Host      string        `bson:"host_name"`
 }
 
 // GroupMeta stores useful metadata about tasks within the same group
@@ -48,6 +52,7 @@ func NewCancelledTaskState(signature *Signature) *TaskState {
 		TaskName:  signature.Name,
 		State:     StateCancelled,
 		CreatedAt: time.Now().UTC(),
+		Host:      getHostName(),
 	}
 }
 
@@ -58,6 +63,7 @@ func NewPendingTaskState(signature *Signature) *TaskState {
 		TaskName:  signature.Name,
 		State:     StatePending,
 		CreatedAt: time.Now().UTC(),
+		Host:      getHostName(),
 	}
 }
 
@@ -67,6 +73,7 @@ func NewReceivedTaskState(signature *Signature) *TaskState {
 		TaskUUID:  signature.UUID,
 		State:     StateReceived,
 		CreatedAt: time.Now().UTC(),
+		Host:      getHostName(),
 	}
 }
 
@@ -76,6 +83,7 @@ func NewStartedTaskState(signature *Signature) *TaskState {
 		TaskUUID:  signature.UUID,
 		State:     StateStarted,
 		CreatedAt: time.Now().UTC(),
+		Host:      getHostName(),
 	}
 }
 
@@ -86,6 +94,7 @@ func NewSuccessTaskState(signature *Signature, results []*TaskResult) *TaskState
 		State:     StateSuccess,
 		Results:   results,
 		CreatedAt: time.Now().UTC(),
+		Host:      getHostName(),
 	}
 }
 
@@ -96,6 +105,7 @@ func NewFailureTaskState(signature *Signature, err string) *TaskState {
 		State:     StateFailure,
 		Error:     err,
 		CreatedAt: time.Now().UTC(),
+		Host:      getHostName(),
 	}
 }
 
@@ -105,6 +115,7 @@ func NewRetryTaskState(signature *Signature) *TaskState {
 		TaskUUID:  signature.UUID,
 		State:     StateRetry,
 		CreatedAt: time.Now().UTC(),
+		Host:      getHostName(),
 	}
 }
 
@@ -132,4 +143,13 @@ func (taskState *TaskState) IsCancelled() bool {
 // IsPending returns true if state is PENDING
 func (taskState *TaskState) IsPending() bool {
 	return taskState.State == StatePending
+}
+
+// helper function to get host name
+func getHostName() string {
+	hostName, err := os.Hostname()
+	if err != nil {
+		hostName = "unknown"
+	}
+	return hostName
 }
