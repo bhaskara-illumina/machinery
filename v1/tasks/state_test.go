@@ -28,4 +28,7 @@ func TestTaskStateIsCompleted(t *testing.T) {
 
 	taskState.State = tasks.StateFailure
 	assert.True(t, taskState.IsCompleted())
+
+	taskState.State = tasks.StateCancelled
+	assert.True(t, taskState.IsCancelled())
 }
